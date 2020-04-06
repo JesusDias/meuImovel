@@ -1,0 +1,1 @@
+create database meu_imovel utf8_inicode_ci;

@@ -19,9 +19,15 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::prefix('v1')->namespace('Api')->group(function(){
-
+    
+    //Rotas para imovel
     Route::name('real_states')->group(function(){
 
         Route::resource('real-states', 'RealStateController'); //api/v1/real-states/
+    });
+    //Rotas para usuário
+    Route::name('users')->group(function(){
+
+        Route::resource('users', 'UserController');
     });
 });

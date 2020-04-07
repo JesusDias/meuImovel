@@ -1,7 +1,10 @@
 <?php
 
 namespace App\Http\Controllers\Api;
+
+use App\Http\Requests\RealStateRequest;
 use App\RealState;
+use App\Api\ApiMessages;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -39,14 +42,15 @@ class RealStateController extends Controller
         ], 200);
 
         } catch (\Exception $e) {
+            $message = new ApiMessages($e->getMessage());
             //sinão eu retorno essa mensagem de erro
-            return response()->json(['error' => $e->getMessage()], 401);
+            return response()->json($message->getMessage(), 401);
         }
         
     }
 
     //==============SALVAR====================================
-    public function store(Request $request)
+    public function store(RealStateRequest $request)
     {   
         //variavel recebendo tudo que foi enviado
         $data = $request->all();
@@ -61,14 +65,15 @@ class RealStateController extends Controller
         ], 200);
 
         } catch (\Exception $e) {
+            $message = new ApiMessages($e->getMessage());
             //sinão eu retorno essa mensagem de erro
-            return response()->json(['error' => $e->getMessage()], 401);
+            return response()->json($message->getMessage(), 401);
         }
         
     }
 
     //======================EDITAR===================================
-    public function update($id, Request $request)
+    public function update($id, RealStateRequest $request)
     {   
         //variavel recebendo tudo que foi enviado
         $data = $request->all();
@@ -85,8 +90,9 @@ class RealStateController extends Controller
         ], 200);
 
         } catch (\Exception $e) {
+            $message = new ApiMessages($e->getMessage());
             //sinão eu retorno essa mensagem de erro
-            return response()->json(['error' => $e->getMessage()], 401);
+            return response()->json($message->getMessage(), 401);
         }
         
     }
@@ -108,8 +114,9 @@ class RealStateController extends Controller
          ], 200);
  
          } catch (\Exception $e) {
+            $message = new ApiMessages($e->getMessage());
              //sinão, eu retorno essa mensagem de erro com StatusCode
-             return response()->json(['error' => $e->getMessage()], 401);
+             return response()->json($message->getMessage(), 401);
          }
          
      }

@@ -30,4 +30,10 @@ Route::prefix('v1')->namespace('Api')->group(function(){
 
         Route::resource('users', 'UserController');
     });
+
+    //Rotas para categoria
+    Route::name('categories')->group(function(){
+
+        Route::resource('categories', 'CategoryController');
+    });
 });

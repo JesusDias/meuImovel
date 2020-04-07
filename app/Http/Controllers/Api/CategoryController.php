@@ -2,20 +2,21 @@
 
 namespace App\Http\Controllers\Api;
 use App\Api\ApiMessages;
-use App\User;
+use App\Category;
+
 use App\Http\Controllers\Controller;
-//use App\Http\Requests\UserRequest;
+use App\Http\Requests\CategoryRequest;
+//pode retirar esse request que ja veio automático
+//use Illuminate\Http\Request;
 
-use Illuminate\Http\Request;
-
-
-class UserController extends Controller
+class CategoryController extends Controller
 {
-    private $user;
 
-    public function __construct(User $user)
+    private $category;
+
+    public function __construct(Category $category)
     {
-        $this->user = $user;
+        $this->category = $category;
     }
 
     /**
@@ -25,9 +26,9 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = $this->user->paginate('10');
+        $categories = $this->category->paginate('10');
 
-        return response()->json($users, 200);
+        return response()->json($categories, 200);
     }
 
     /**
@@ -36,32 +37,28 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CategoryRequest $request)
     {
-         //variavel recebendo tudo que foi enviado
-         $data = $request->all();
-        //se na requisição não houver campo password ele ja cai no if
-        //se houver mas estiver vazio ele tbm cai
-         if(!$request->has('password') || !$request->get('password')) {
-             $message = new ApiMessages('É necessário informar uma senha para usuário...');
-             return response()->json($message->getMessage(), 401);
-         }
-         try{
-             //salvo o que foi digitado
-             $data['password'] = bcrypt($data['password']);
-             $user = $this->user->create($data);
-             //retorno o que foi salvo
-         return response()->json([
-             'data' => [
-                 'msg' => 'Usuário cadastrado com sucesso!'
-             ]
-         ], 200);
- 
-         } catch (\Exception $e) {
-             $message = new ApiMessages($e->getMessage());
-             //sinão eu retorno essa mensagem de erro
-             return response()->json($message->getMessage(), 401);
-         }
+          //variavel recebendo tudo que foi enviado
+          $data = $request->all();
+          //se na requisição não houver campo password ele ja cai no if
+          //se houver mas estiver vazio ele tbm cai
+           
+           try{
+               //salvo o que foi digitado
+               $category = $this->category->create($data);
+               //retorno o que foi salvo
+           return response()->json([
+               'data' => [
+                   'msg' => 'Categoria cadastrada com sucesso!'
+               ]
+           ], 200);
+   
+           } catch (\Exception $e) {
+               $message = new ApiMessages($e->getMessage());
+               //sinão eu retorno essa mensagem de erro
+               return response()->json($message->getMessage(), 401);
+           }
     }
 
     /**
@@ -72,13 +69,14 @@ class UserController extends Controller
      */
     public function show($id)
     {
+        
         try{
             //busca o imóvel que tenha esse id
-            $user = $this->user->findOrFail($id);
+            $category = $this->category->findOrFail($id);
         
             //retorna esse imovel que tenah o id informado com o statusCode
         return response()->json([
-            'data' => $user
+            'data' => $category
         ], 200);
 
         } catch (\Exception $e) {
@@ -95,26 +93,20 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(CategoryRequest $request, $id)
     {
         //variavel recebendo tudo que foi enviado
         $data = $request->all();
 
-        if($request->has('password') && $request->get('password')) {
-            $data['password'] = bcrypt($data['password']);
-        } else {
-            unset($data['password']);
-        }
-
         try{
             //salva nessa variável o imovel que tenha esse id
-            $user = $this->user->findOrFail($id);
+            $category = $this->category->findOrFail($id);
             //chama o metodo update pra esses novos dados que estão na variável $data
-            $user->update($data);
+            $category->update($data);
             //retorno a mensagem de atualizado e o StatusCode
         return response()->json([
             'data' => [
-                'msg' => 'Usuário atualizado com sucesso!'
+                'msg' => 'Categoria atualizada com sucesso!'
             ]
         ], 200);
 
@@ -135,14 +127,14 @@ class UserController extends Controller
     {
         try{
             //busca esse imovel que tenha esse id
-            $user = $this->user->findOrFail($id);
+            $category = $this->category->findOrFail($id);
             //deleta o imovel que tenha esse id
-            $user->delete($id);
+            $category->delete($id);
 
             //retorno a mensagemde imovel removido e statusCode 
         return response()->json([
             'data' => [
-                'msg' => 'Usuário removido com sucesso!'
+                'msg' => 'Categoria removida com sucesso!'
             ]
         ], 200);
 

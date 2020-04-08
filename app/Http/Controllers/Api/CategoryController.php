@@ -24,19 +24,21 @@ class CategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    //==========================LISTAR TODOS=============================================
     public function index()
     {
         $categories = $this->category->paginate('10');
 
         return response()->json($categories, 200);
     }
-
     /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+
+     //==========================SALVAR======================================================
     public function store(CategoryRequest $request)
     {
           //variavel recebendo tudo que foi enviado
@@ -67,6 +69,8 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
+     //==========================LISTAGEM FILTRANDO ID====================================================
     public function show($id)
     {
         
@@ -93,6 +97,8 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
+     //==========================EDITAR====================================================
     public function update(CategoryRequest $request, $id)
     {
         //variavel recebendo tudo que foi enviado
@@ -123,6 +129,8 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
+     //==========================DELETAR====================================================
     public function destroy($id)
     {
         try{
@@ -145,7 +153,8 @@ class CategoryController extends Controller
         }
     }
 
-     //===============LISTAR CATEGORIAS COM IMOVEIS==========================================================
+     //===============LISTAR CATEGORIAS COM IMOVEIS=============================================================
+     //esse método está sendo chamado em uma rota específica para chamar os imoveis de uma determinada categoria
      
      public function realState($id)
 	{

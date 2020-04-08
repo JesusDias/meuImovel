@@ -6,7 +6,7 @@ use App\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 
-//use App\Http\Requests\UserRequest;
+use App\Http\Requests\UserRequest;
 
 use Illuminate\Http\Request;
 
@@ -25,6 +25,8 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+     //================================LISTAR=================================================
     public function index()
     {
         $users = $this->user->paginate('10');
@@ -38,10 +40,14 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+
+    //====================================SALVAR================================================
     public function store(Request $request)
     {
          //variavel recebendo tudo que foi enviado
          $data = $request->all();
+
+
         //se na requisição não houver campo password ele ja cai no if
         //se houver mas estiver vazio ele tbm cai
          if(!$request->has('password') || !$request->get('password')) {
@@ -49,40 +55,40 @@ class UserController extends Controller
              return response()->json($message->getMessage(), 401);
          }
 
-         //Vamos fazer uma validação nesses dados de perfil que serão salvos
+         //Vamos fazer uma validação nesses dados de profile que serão salvos
          Validator::make($data, [
 		    'phone' => 'required',
 	    	'mobile_phone' => 'required'
-	    ])->validate();
+        ])->validate();
 
 
          try{
-             //salvo o que foi digitado
+             //encriptar o password antes de salvar
              $data['password'] = bcrypt($data['password']);
+
+             //salvando
              $user = $this->user->create($data);
              
 
-             //salvando os dados de perfil de usuário
+             //chamando o relacionamento entre as duas entidades e salnado na respectica tabea (user_profile)
              $user->profile()->create(
 	    		[
 	    			'phone' => $data['phone'],
-				    'mobile_phone' => $data['mobile_phone']
-			    ]
+                    'mobile_phone' => $data['mobile_phone'],
+                ]
 		    );
 
-
-             //retorno o que foi salvo
-         return response()->json([
-             'data' => [
-                 'msg' => 'Usuário cadastrado com sucesso!'
-             ]
-         ], 200);
- 
-         } catch (\Exception $e) {
-             $message = new ApiMessages($e->getMessage());
-             //sinão eu retorno essa mensagem de erro
-             return response()->json($message->getMessage(), 401);
-         }
+            //retorno o que foi salvo
+            return response()->json([
+                'data' => [
+                    'msg' => 'Usuário cadastrado com sucesso!'
+                ]
+            ], 200);
+    
+            } catch (\Exception $e) {
+                $message = new ApiMessages($e->getMessage());
+                return response()->json($message->getMessage(), 401);
+            }
     }
 
     /**
@@ -91,6 +97,8 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
+     //===============================LISTAGEM COM FILTRO=========================================
     public function show($id)
     {
         try{
@@ -108,7 +116,6 @@ class UserController extends Controller
 
         } catch (\Exception $e) {
             $message = new ApiMessages($e->getMessage());
-            //sinão eu retorno essa mensagem de erro
             return response()->json($message->getMessage(), 401);
         }
     }
@@ -120,6 +127,8 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
+      //=======================================EDITAR===============================================
     public function update(Request $request, $id)
     {
         //variavel recebendo tudo que foi enviado
@@ -138,7 +147,7 @@ class UserController extends Controller
         ])->validate();
 
         try{
-            //me trz o que foi passado nesse array profile
+            //traz o que foi passado nesse array profile
             $profile = $data['profile'];
             //agora serializa e atribui de volta na opção do array social_networks 
             $profile['social_networks'] = serialize($profile['social_networks']);
@@ -161,7 +170,6 @@ class UserController extends Controller
 
         } catch (\Exception $e) {
             $message = new ApiMessages($e->getMessage());
-            //sinão eu retorno essa mensagem de erro
             return response()->json($message->getMessage(), 401);
         }
     }
@@ -172,6 +180,8 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
+     //==========================================DELETAR=======================================================
     public function destroy($id)
     {
         try{

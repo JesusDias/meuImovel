@@ -43,7 +43,6 @@ class RealStateController extends Controller
 
         } catch (\Exception $e) {
             $message = new ApiMessages($e->getMessage());
-            //sinão eu retorno essa mensagem de erro
             return response()->json($message->getMessage(), 401);
         }
         

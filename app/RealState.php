@@ -16,6 +16,13 @@ class RealState extends Model
     ];
     public function user()
     {
-        return $this->belongsTo(User::class); //refereciando pro UserId
+        return $this->belongsTo(User::class); //um imovel tem um dono
     }
+
+	public function categories()
+	{
+		return $this->belongsToMany(Category::class, 'real_state_categories');//um imovel tem varias categorias
+    }
+    
+    //O segundo parâmetro que ta levando esse nome da tabela está ai porque no banco de dados está com nome diferente.
 }

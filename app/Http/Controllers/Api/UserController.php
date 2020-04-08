@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api;
 use App\Api\ApiMessages;
 use App\User;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
+
 //use App\Http\Requests\UserRequest;
 
 use Illuminate\Http\Request;
@@ -46,10 +48,29 @@ class UserController extends Controller
              $message = new ApiMessages('É necessário informar uma senha para usuário...');
              return response()->json($message->getMessage(), 401);
          }
+
+         //Vamos fazer uma validação nesses dados de perfil que serão salvos
+         Validator::make($data, [
+		    'phone' => 'required',
+	    	'mobile_phone' => 'required'
+	    ])->validate();
+
+
          try{
              //salvo o que foi digitado
              $data['password'] = bcrypt($data['password']);
              $user = $this->user->create($data);
+             
+
+             //salvando os dados de perfil de usuário
+             $user->profile()->create(
+	    		[
+	    			'phone' => $data['phone'],
+				    'mobile_phone' => $data['mobile_phone']
+			    ]
+		    );
+
+
              //retorno o que foi salvo
          return response()->json([
              'data' => [
@@ -74,7 +95,11 @@ class UserController extends Controller
     {
         try{
             //busca o imóvel que tenha esse id
-            $user = $this->user->findOrFail($id);
+            //esse with eu passo o nome da meu array de informações que estão relacionadas
+            $user = $this->user->with('profile')->findOrFail($id);
+
+            //assim eu deserializo pra aparecer na forma de um link
+            $user->profile->social_networks = unserialize($user->profile->social_networks);
         
             //retorna esse imovel que tenah o id informado com o statusCode
         return response()->json([
@@ -106,11 +131,27 @@ class UserController extends Controller
             unset($data['password']);
         }
 
+        //e tbm valida esses dados, que são obrigatórios
+        Validator::make($data, [
+            'profile.phone' => 'required',
+            'profile.mobile_phone' => 'required'
+        ])->validate();
+
         try{
+            //me trz o que foi passado nesse array profile
+            $profile = $data['profile'];
+            //agora serializa e atribui de volta na opção do array social_networks 
+            $profile['social_networks'] = serialize($profile['social_networks']);
+
+
             //salva nessa variável o imovel que tenha esse id
             $user = $this->user->findOrFail($id);
             //chama o metodo update pra esses novos dados que estão na variável $data
             $user->update($data);
+
+            //chama o relacionamento e atualiza os dados que estão no profile
+            $user->profile()->update($profile);
+
             //retorno a mensagem de atualizado e o StatusCode
         return response()->json([
             'data' => [

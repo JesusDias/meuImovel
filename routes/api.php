@@ -33,6 +33,8 @@ Route::prefix('v1')->namespace('Api')->group(function(){
 
     //Rotas para categoria
     Route::name('categories')->group(function(){
+        
+        Route::get('categories/{id}/real-states', 'CategoryController@realState');
 
         Route::resource('categories', 'CategoryController');
     });

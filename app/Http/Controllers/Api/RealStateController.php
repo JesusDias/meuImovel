@@ -57,6 +57,14 @@ class RealStateController extends Controller
         try{
             //salvo o que foi digitado
             $realState = $this->realState->create($data);
+
+
+            //Aqui eu só to sincronizando os id's
+            if(isset($data['categories']) && count($data['categories'])) {
+    			$realState->categories()->sync($data['categories']);
+            }
+            
+
             //retorno o que foi salvo
         return response()->json([
             'data' => [
@@ -82,6 +90,12 @@ class RealStateController extends Controller
             $realState = $this->realState->findOrFail($id);
             //chama o metodo update pra esses novos dados que estão na variável $data
             $realState->update($data);
+
+            if(isset($data['categories']) && count($data['categories'])) {
+    			$realState->categories()->sync($data['categories']);
+            }
+            
+
             //retorno a mensagem de atualizado e o StatusCode
         return response()->json([
             'data' => [
@@ -120,4 +134,6 @@ class RealStateController extends Controller
          }
          
      }
+
+    
 }
